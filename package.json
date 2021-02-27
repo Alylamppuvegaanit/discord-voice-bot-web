@@ -1,0 +1,19 @@
+{
+  "name": "discord-voice-bot-web",
+  "version": "1.0.0",
+  "description": "Web interface for discord-voice-bot",
+  "main": "discord-voice-bot-web.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Alylamppuvegaanit/discord-voice-bot-web.git"
+  },
+  "author": "alylamppuvegaanit",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Alylamppuvegaanit/discord-voice-bot-web/issues"
+  },
+  "homepage": "https://github.com/Alylamppuvegaanit/discord-voice-bot-web#readme"
+}
