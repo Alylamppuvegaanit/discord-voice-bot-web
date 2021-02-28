@@ -34,10 +34,35 @@ function PlayListTable() {
 
   // Fetch playlists from backend entrypoint
   const fetchPlaylists = async () => {
-    const res = await fetch('http://localhost:20202/fetch_data')
-    const json = await res.json()
-    return json
+    const res = await fetch('http://localhost:20202/fetch_data');
+    const json = await res.json();
+    return json;
   }
+
+
+  // Send new data to backend entrypoint
+  const updateData = async () => {
+    let playlistPayload = playlistRows;
+    let updatedPlaylistIndex = playlistPayload.findIndex(playlist => playlist.id === activePlaylist);
+    playlistPayload[updatedPlaylistIndex].songs = songRows;
+
+    console.log(playlistPayload);
+
+    const requestOptions = {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(playlistPayload)
+    };
+
+    await fetch('http://localhost:20202/update_data', requestOptions);
+
+    fetchPlaylists().then(playlists => {
+      setPlaylistRows(playlists)
+    })
+  }
+
+
+  // Initiate effect for parsing playlist data from backend
   useEffect(() => {
     fetchPlaylists().then(playlists => {
       setPlaylistRows(playlists)
@@ -102,7 +127,7 @@ function PlayListTable() {
 
     // Do basic validation and check whether a playlist is selected
     if (newSongName.length > 5 && activePlaylist.length > 2) {
-      const tmp = songRows.concat({ title: newSongName, id: songRows + 1 });
+      const tmp = songRows.concat({ title: newSongName, id: songRows.length + 1 });
       setSongRows(tmp);
     }
 
@@ -111,16 +136,11 @@ function PlayListTable() {
 
 
   const selectPlaylist = (e) => {  
-    let selectedPlaylistSongs = [];
-    let songID = 0;
-
     // Read the songs of a playlist and append them to the song list grid
-    playlistRows.find(playlist => playlist.id === e.row.id)?.songs.forEach(song => {
-      selectedPlaylistSongs.push({ id: songID++, title: song });
-    });
+    let songs = playlistRows.find(playlist => playlist.id === e.row.id)?.songs;
 
     setActivePlaylist(e.row.id);
-    setSongRows(selectedPlaylistSongs);
+    setSongRows(songs);
   };
 
 
@@ -173,6 +193,11 @@ function PlayListTable() {
       </Dialog>
 
 
+      <Button variant="contained" color="primary" onClick={updateData} style={{ width: "auto", bottom: 50, left: 50 , position: "absolute" }}>
+        Save changes
+      </Button>
+
+
       <Container>
         <Grid container spacing={1} style={{ margin: "60px 0px" }} >
           <Grid item xs={4}>
@@ -194,9 +219,6 @@ function PlayListTable() {
               </Button>
               <Button variant="contained" onClick={deleteSong} style={{ width: "auto", margin: "20px 0px" }}>
                 Delete song
-              </Button>
-              <Button variant="contained" style={{ width: "auto", margin: "20px 20px" }}>
-                Save changes
               </Button>
             </Box>
           </Grid>
