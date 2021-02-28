@@ -13,7 +13,6 @@ import TextField from '@material-ui/core/TextField';
 
 const playlistColumns = [
   { field: 'id', headerName: 'Playlist name', flex: 0.5 },
-  { field: 'song_count', headerName: 'Songs', flex: 0.2 },
 ];
 
 
@@ -33,35 +32,16 @@ function PlayListTable() {
   const [ newSongURL, setNewSongURL ] = useState('');
 
 
-  // Fake data from "the backend"
-  let playlists = [
-    { id: "Anime", songs: [
-      "https://www.youtube.com/watch?v=fvSRM1zFQ_0",
-      "https://www.youtube.com/watch?v=Db1fj2pRFu8",
-      "https://www.youtube.com/watch?v=WAoPeG1LU1g",
-      "https://www.youtube.com/watch?v=nU21rCWkuJw",
-    ]},
-    { id: "Raikku", songs: [
-      "https://www.youtube.com/watch?v=Y1HIDtGZlXI",
-    ]},
-    { id: "STP", songs: [
-      "https://www.youtube.com/watch?v=iQ6iNkqmk6M",
-      "https://www.youtube.com/watch?v=lg1_OYFLgHU",
-      "https://www.youtube.com/watch?v=Bl-ouDbqy-g",
-      "https://www.youtube.com/watch?v=s8LsZNITPqk",
-      "https://www.youtube.com/watch?v=ab2lUr3hNIk",
-      "https://www.youtube.com/watch?v=sS4JY2JOwZs",
-    ]},
-  ];
-
-
+  // Fetch playlists from backend entrypoint
+  const fetchPlaylists = async () => {
+    const res = await fetch('http://localhost:20202/fetch_data')
+    const json = await res.json()
+    return json
+  }
   useEffect(() => {
-    // Parse the backend data to grid rows
-    const tmp = playlists.map(playlist => {
-      return { id: playlist.id, song_count: playlist.songs.length };
+    fetchPlaylists().then(playlists => {
+      setPlaylistRows(playlists)
     })
-
-    setPlaylistRows( tmp );
   }, [])
 
 
@@ -107,7 +87,7 @@ function PlayListTable() {
     if (newPlaylistName.length > 2) {
       // Check if a playlist already exists with given name
       if (!playlistRows.some(playlist => playlist.id === newPlaylistName)) {
-        const tmp = playlistRows.concat({ id: newPlaylistName, song_count: 0, songs: []});
+        const tmp = playlistRows.concat({ id: newPlaylistName, songs: []});
         setPlaylistRows(tmp);
       }
     }
@@ -135,7 +115,7 @@ function PlayListTable() {
     let songID = 0;
 
     // Read the songs of a playlist and append them to the song list grid
-    playlists.find(playlist => playlist.id === e.row.id)?.songs.forEach(song => {
+    playlistRows.find(playlist => playlist.id === e.row.id)?.songs.forEach(song => {
       selectedPlaylistSongs.push({ id: songID++, title: song });
     });
 
@@ -225,5 +205,6 @@ function PlayListTable() {
     </>
   );
 }
+
 
 export default PlayListTable;

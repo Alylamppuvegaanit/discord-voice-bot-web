@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/Alylamppuvegaanit/discord-voice-bot-web/issues"
   },
-  "homepage": "https://github.com/Alylamppuvegaanit/discord-voice-bot-web#readme"
+  "homepage": "https://github.com/Alylamppuvegaanit/discord-voice-bot-web#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
 }
