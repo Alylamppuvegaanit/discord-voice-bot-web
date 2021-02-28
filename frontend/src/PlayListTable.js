@@ -1,149 +1,223 @@
 import { React, useState, useEffect } from 'react';
+import { DataGrid } from '@material-ui/data-grid';
+import Container from '@material-ui/core/Container';
+import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
-import TextField from '@material-ui/core/TextField';
-import Grid from '@material-ui/core/Grid';
-import Paper from '@material-ui/core/Paper';
-import Box from '@material-ui/core/Box';
-import Container from '@material-ui/core/Container';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import { DataGrid } from '@material-ui/data-grid';
+import Grid from '@material-ui/core/Grid';
+import TextField from '@material-ui/core/TextField';
 
 
 const playlistColumns = [
-  { field: 'name', headerName: 'Playlist name', width: 200 },
-  { field: 'song_count', headerName: 'Songs', width: 100 },
+  { field: 'id', headerName: 'Playlist name', flex: 0.5 },
+  { field: 'song_count', headerName: 'Songs', flex: 0.2 },
 ];
+
 
 const songColumns = [
-  { field: 'title', headerName: 'Song title', width: 400 }
+  { field: 'title', headerName: 'Song title', flex: 1 }
 ];
 
-function PlayListTable() {
-  const [open, setOpen] = useState(false);
-  const [songRows, setSongRows] = useState([]);
-  const [playlistRows, setPlaylistRows] = useState([]);
 
+function PlayListTable() {
+  const [ activePlaylist, setActivePlaylist ] = useState('');
+  const [ activeSong, setActiveSong ] = useState('');
+  const [ newPlaylistDialogOpen, setNewPlaylistDialogOpen ] = useState(false);
+  const [ newSongDialogOpen, setNewSongDialogOpen ] = useState(false);
+  const [ songRows, setSongRows ] = useState([]);
+  const [ playlistRows, setPlaylistRows ] = useState([]);
+  const [ newPlaylistTitle, setNewPlaylistTitle ] = useState('');
+  const [ newSongURL, setNewSongURL ] = useState('');
+
+
+  // Fake data from "the backend"
   let playlists = [
-    { id: 1, name: "Anime", songs: [
-      "youtube.com/fiids",
-      "youtube.com/fiidsdd"
+    { id: "Anime", songs: [
+      "https://www.youtube.com/watch?v=fvSRM1zFQ_0",
+      "https://www.youtube.com/watch?v=Db1fj2pRFu8",
+      "https://www.youtube.com/watch?v=WAoPeG1LU1g",
+      "https://www.youtube.com/watch?v=nU21rCWkuJw",
     ]},
-    { id: 2, name: "Jeejee", songs: [
-      "youtube.com/8f278j9",
-      "youtube.com/01mv12m",
-      "youtube.com/1t9i509",
-      "youtube.com/1t9i509",
-      "youtube.com/1t9i509",
-      "youtube.com/1t9i509",
-      "youtube.com/1t9i509",
-      "youtube.com/1t9i509",
-      "youtube.com/1t9i509",
-      "youtube.com/1t9i509",
-      "youtube.com/1t9i509",
-      "youtube.com/1t9i509",
+    { id: "Raikku", songs: [
+      "https://www.youtube.com/watch?v=Y1HIDtGZlXI",
     ]},
-    { id: 3, name: "Sss", songs: [
-      "youtube.com/gjiqq38",
-      "youtube.com/1t9i509",
-      "youtube.com/1t9i509",
-      "youtube.com/1t9i509",
-      "youtube.com/1t9i509",
-      "youtube.com/1t9i509",
+    { id: "STP", songs: [
+      "https://www.youtube.com/watch?v=iQ6iNkqmk6M",
+      "https://www.youtube.com/watch?v=lg1_OYFLgHU",
+      "https://www.youtube.com/watch?v=Bl-ouDbqy-g",
+      "https://www.youtube.com/watch?v=s8LsZNITPqk",
+      "https://www.youtube.com/watch?v=ab2lUr3hNIk",
+      "https://www.youtube.com/watch?v=sS4JY2JOwZs",
     ]},
   ];
 
 
-
   useEffect(() => {
+    // Parse the backend data to grid rows
     const tmp = playlists.map(playlist => {
-      return { id: playlist.id, name: playlist.name, song_count: playlist.songs.length };
+      return { id: playlist.id, song_count: playlist.songs.length };
     })
+
     setPlaylistRows( tmp );
   }, [])
 
 
-  const createWindow = () => {
-    setOpen(true);
+  const openNewPlaylistDialog = () => {
+    setNewPlaylistDialogOpen(true);
   };
 
-  const closeWindow = () => {
-    setOpen(false);
+
+  const closeNewPlaylistDialog = () => {
+    setNewPlaylistDialogOpen(false);
   };
 
-  const newPlaylist = () => {
-    console.log(playlistRows);
 
-    // Create new playlist
-    const tmp = playlistRows.concat({ id: 4, name: "Papopa", songs: [
-      "youtube.com/frewgw",
-    ]});
+  const openNewSongDialog = () => {
+    setNewSongDialogOpen(true);
+  };
 
-    console.log(tmp);
+
+  const closeNewSongDialog = () => {
+    setNewSongDialogOpen(false);
+  };
+
+
+  const deletePlaylist = () => {
+    // Filter out playlist element with given id
+    const tmp = playlistRows.filter(playlist => { return playlist.id !== activePlaylist });
     setPlaylistRows(tmp);
-    setOpen(false);
+    setSongRows([]);
+  }
+
+
+  const deleteSong = () => {
+    // Filter out song element with given url
+    const tmp = songRows.filter(song => { return song.title !== activeSong });
+    setSongRows(tmp);
+  }
+
+
+  const newPlaylist = (e) => {
+    e.preventDefault();
+    let newPlaylistName = newPlaylistTitle;
+
+    if (newPlaylistName.length > 2) {
+      // Check if a playlist already exists with given name
+      if (!playlistRows.some(playlist => playlist.id === newPlaylistName)) {
+        const tmp = playlistRows.concat({ id: newPlaylistName, song_count: 0, songs: []});
+        setPlaylistRows(tmp);
+      }
+    }
+
+    setNewPlaylistDialogOpen(false);
   };
+
+
+  const newSong = (e) => {
+    e.preventDefault();
+    let newSongName = newSongURL;
+
+    // Do basic validation and check whether a playlist is selected
+    if (newSongName.length > 5 && activePlaylist.length > 2) {
+      const tmp = songRows.concat({ title: newSongName, id: songRows + 1 });
+      setSongRows(tmp);
+    }
+
+    setNewSongDialogOpen(false);
+  };
+
 
   const selectPlaylist = (e) => {  
-    let tmp = [];
-    let i = 0;
-    playlists.forEach(playlist => {
-      if (playlist.name === e.row.name) {
-        playlist.songs.forEach(song => {
-          tmp.push({ id: i, title: song });
-          i++;
-        })
-        setSongRows(tmp);
-      }
+    let selectedPlaylistSongs = [];
+    let songID = 0;
+
+    // Read the songs of a playlist and append them to the song list grid
+    playlists.find(playlist => playlist.id === e.row.id)?.songs.forEach(song => {
+      selectedPlaylistSongs.push({ id: songID++, title: song });
     });
+
+    setActivePlaylist(e.row.id);
+    setSongRows(selectedPlaylistSongs);
   };
+
+
+  const selectSong = (e) => {  
+    setActiveSong(e.row.title);
+  };
+
 
   return (
     <>
       <Dialog
-        open={open}
-        onClose={closeWindow}
+        open={newPlaylistDialogOpen}
+        onClose={closeNewPlaylistDialog}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
         <DialogTitle id="alert-dialog-title">{"Create a new playlist"}</DialogTitle>
         <DialogContent>
-          <form>
-            <TextField label="Title" />
-          </form>
+          <TextField label="Title" value={newPlaylistTitle} onInput={e => setNewPlaylistTitle(e.target.value)} />
         </DialogContent>
         <DialogActions>
-        <Button onClick={closeWindow} color="primary">
-          Cancel
-        </Button>
-        <Button onClick={newPlaylist} color="primary" autoFocus>
-          Create
-        </Button>
+          <Button onClick={closeNewPlaylistDialog} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={newPlaylist} color="primary">
+            Create
+          </Button>
         </DialogActions>
       </Dialog>
+
+
+      <Dialog
+        open={newSongDialogOpen}
+        onClose={closeNewSongDialog}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{"Add a new song to playlist"}</DialogTitle>
+        <DialogContent>
+          <TextField label="YouTube URL" onInput={e => setNewSongURL(e.target.value)} />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={closeNewSongDialog} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={newSong} color="primary">
+            Create
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+
       <Container>
-        <br/>
-        <Grid container spacing={1}>
-          <Grid item xs>
+        <Grid container spacing={1} style={{ margin: "60px 0px" }} >
+          <Grid item xs={4}>
             <Box>
-              <Paper>
-                <DataGrid autoHeight={true} onRowClick={selectPlaylist} rows={playlistRows} columns={playlistColumns} pageSize={20} />
-                <Button variant="contained" color="primary" onClick={createWindow} style={{ width: "auto", margin: "30px 30px" }}>
-                  Create 
-                </Button>
-                <Button variant="contained" onClick={createWindow} style={{ width: "auto", margin: "30px 0px" }}>
-                  Delete 
-                </Button>
-              </Paper>
+              <DataGrid autoHeight={true} minHeight={500} onRowClick={selectPlaylist} rows={playlistRows} columns={playlistColumns} pageSize={20} />
+              <Button variant="contained" color="primary" onClick={openNewPlaylistDialog} style={{ width: "auto", margin: "20px 20px" }}>
+                New playlist 
+              </Button>
+              <Button variant="contained" onClick={deletePlaylist} style={{ width: "auto", margin: "20px 0px" }}>
+                Delete playlist
+              </Button>
             </Box>
           </Grid>
-          <Grid item xs>
+          <Grid item xs={8}>
             <Box>
-              <Paper>
-                <DataGrid autoHeight={true} rows={songRows} columns={songColumns} pageSize={20} />
-              </Paper>
+              <DataGrid autoHeight={true} onRowClick={selectSong} rows={songRows} columns={songColumns} pageSize={20} />
+              <Button variant="contained" color="primary" onClick={openNewSongDialog} style={{ width: "auto", margin: "20px 20px" }}>
+                Add song
+              </Button>
+              <Button variant="contained" onClick={deleteSong} style={{ width: "auto", margin: "20px 0px" }}>
+                Delete song
+              </Button>
+              <Button variant="contained" style={{ width: "auto", margin: "20px 20px" }}>
+                Save changes
+              </Button>
             </Box>
           </Grid>
         </Grid>
