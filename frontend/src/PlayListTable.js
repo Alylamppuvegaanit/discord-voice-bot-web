@@ -216,7 +216,7 @@ function PlayListTable() {
       >
         <DialogTitle id="alert-dialog-title">{"Give password"}</DialogTitle>
         <DialogContent>
-          <TextField label="Password" onInput={e => setAuthKey(e.target.value)} />
+          <TextField autoFocus label="Password" onInput={e => setAuthKey(e.target.value)} />
         </DialogContent>
         <DialogActions>
           <Button onClick={authUser} color="primary">
@@ -234,7 +234,7 @@ function PlayListTable() {
       >
         <DialogTitle id="alert-dialog-title">{"Create a new playlist"}</DialogTitle>
         <DialogContent>
-          <TextField label="Title" value={newPlaylistTitle} onInput={e => setNewPlaylistTitle(e.target.value)} />
+          <TextField autoFocus label="Title" value={newPlaylistTitle} onInput={e => setNewPlaylistTitle(e.target.value)} />
         </DialogContent>
         <DialogActions>
           <Button onClick={closeNewPlaylistDialog} color="primary">
@@ -255,7 +255,7 @@ function PlayListTable() {
       >
         <DialogTitle id="alert-dialog-title">{"Add a new song to playlist"}</DialogTitle>
         <DialogContent>
-          <TextField label="YouTube URL" onInput={e => setNewSongURL(e.target.value)} />
+          <TextField autoFocus label="YouTube URL" onInput={e => setNewSongURL(e.target.value)} />
         </DialogContent>
         <DialogActions>
           <Button onClick={closeNewSongDialog} color="primary">
