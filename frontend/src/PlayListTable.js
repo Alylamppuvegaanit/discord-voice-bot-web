@@ -12,9 +12,6 @@ import TextField from '@material-ui/core/TextField';
 
 var config = require('./config.json')
 
-// Temporary key variable, to be replaced with actual authentication later on
-const key = "7125721748245718";
-
 const playlistColumns = [
   { field: 'id', headerName: 'Playlist name', flex: 0.5 },
 ];
@@ -30,10 +27,12 @@ function PlayListTable() {
   const [ activeSong, setActiveSong ] = useState('');
   const [ newPlaylistDialogOpen, setNewPlaylistDialogOpen ] = useState(false);
   const [ newSongDialogOpen, setNewSongDialogOpen ] = useState(false);
+  const [ authDialogOpen, setAuthDialogOpen ] = useState(false);
   const [ songRows, setSongRows ] = useState([]);
   const [ playlistRows, setPlaylistRows ] = useState([]);
   const [ newPlaylistTitle, setNewPlaylistTitle ] = useState('');
   const [ newSongURL, setNewSongURL ] = useState('');
+  const [ authKey, setAuthKey ] = useState('');
 
 
   // Fetch playlists from backend entrypoint
@@ -47,7 +46,7 @@ function PlayListTable() {
   // API: Update song list of a playlist
   const apiUpdatePlaylist = async (updatedPlaylistData) => {
     let playlistPayload = {
-      key: key,
+      key: authKey,
       playlistID: activePlaylist,
       playlistSongs: updatedPlaylistData
     };
@@ -65,7 +64,7 @@ function PlayListTable() {
   // API: Add a new playlist
   const apiAddPlaylist = async (newPlaylist) => {
     let playlistPayload = {
-      key: key,
+      key: authKey,
       playlistID: newPlaylist,
       playlistSongs: songRows
     };
@@ -83,7 +82,7 @@ function PlayListTable() {
   // API: Delete a playlist
   const apiDeletePlaylist = async (targetPlaylist) => {
     let playlistPayload = {
-      key: key,
+      key: authKey,
       playlistID: targetPlaylist
     };
 
@@ -99,6 +98,7 @@ function PlayListTable() {
 
   // Initiate effect for parsing playlist data from backend
   useEffect(() => {
+    openAuthDialog();
     fetchPlaylists().then(playlists => {
       setPlaylistRows(playlists)
     })
@@ -122,6 +122,16 @@ function PlayListTable() {
 
   const closeNewSongDialog = () => {
     setNewSongDialogOpen(false);
+  };
+
+
+  const openAuthDialog = () => {
+    setAuthDialogOpen(true);
+  };
+
+
+  const closeAuthDialog = () => {
+    setAuthDialogOpen(false);
   };
 
 
@@ -188,8 +198,30 @@ function PlayListTable() {
   };
 
 
+  const authUser = () => {
+    closeAuthDialog();
+  }
+
+
   return (
     <>
+      <Dialog
+        open={authDialogOpen}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{"Give password"}</DialogTitle>
+        <DialogContent>
+          <TextField label="Password" onInput={e => setAuthKey(e.target.value)} />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={authUser} color="primary">
+            OK
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+
       <Dialog
         open={newPlaylistDialogOpen}
         onClose={closeNewPlaylistDialog}
