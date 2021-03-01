@@ -101,7 +101,7 @@ function PlayListTable() {
     openAuthDialog();
     fetchPlaylists().then(playlists => {
       setPlaylistRows(playlists)
-    })
+    });
   }, [])
 
 
@@ -184,10 +184,14 @@ function PlayListTable() {
   };
 
 
-  const selectPlaylist = (e) => {  
+  const selectPlaylist = (e) => {
+    // Get the latest data from API
+    fetchPlaylists().then(playlists => {
+      setPlaylistRows(playlists)
+    })
+
     // Read the songs of a playlist and append them to the song list grid
     let songs = playlistRows.find(playlist => playlist.id === e.row.id)?.songs;
-
     setActivePlaylist(e.row.id);
     setSongRows(songs);
   };
