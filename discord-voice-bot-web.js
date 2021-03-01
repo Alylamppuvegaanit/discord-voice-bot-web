@@ -45,14 +45,14 @@ authenticateUser = (key) => {
 
 
 // Entrypoint for getting saved playlists
-app.get("/fetch_data", (req, res) => {
+app.get("//fetch_data", (req, res) => {
   res.setHeader("Content-Type", "application/json");
   return res.send(fetchPersistent());
 });
 
 
 // Entrypoint for updating the song list of a playlist
-app.post("/playlist_update", jsonParser, (req, res) => {
+app.post("//playlist_update", jsonParser, (req, res) => {
   if (!authenticateUser(req.body.key)) {
     return res.send({ updated: false });
   }
@@ -75,7 +75,7 @@ app.post("/playlist_update", jsonParser, (req, res) => {
 
 
 // Entrypoint for adding a new playlist
-app.post("/playlist_add", jsonParser, (req, res) => {
+app.post("//playlist_add", jsonParser, (req, res) => {
   if (!authenticateUser(req.body.key)) {
     return res.send({ updated: false });
   }
@@ -94,7 +94,7 @@ app.post("/playlist_add", jsonParser, (req, res) => {
 
 
 // Entrypoint for deleting a playlist
-app.post("/playlist_delete", jsonParser, (req, res) => {
+app.post("//playlist_delete", jsonParser, (req, res) => {
   if (!authenticateUser(req.body.key)) {
     return res.send({ updated: false });
   }
@@ -114,7 +114,7 @@ app.post("/playlist_delete", jsonParser, (req, res) => {
 
 
 // Serve front-end
-app.get("/", (req, res) => {
+app.get("//", (req, res) => {
   return res.send("Hello");
 });
 
