@@ -1,0 +1,7 @@
+{
+    "urls": 
+    {
+        "fetch": "http://localhost:20202/fetch_data",
+        "update": "http://localhost:20202/update_data"
+    }
+}
