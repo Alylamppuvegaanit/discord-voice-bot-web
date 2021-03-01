@@ -13,7 +13,7 @@ import TextField from '@material-ui/core/TextField';
 var config = require('./config.json')
 
 // Temporary key variable, to be replaced with actual authentication later on
-const key = "7125721748245718_wrong";
+const key = "7125721748245718";
 
 const playlistColumns = [
   { field: 'id', headerName: 'Playlist name', flex: 0.5 },
@@ -44,18 +44,13 @@ function PlayListTable() {
   }
 
 
-  // Send new data to backend entrypoint
-  const updateData = async () => {
+  // API: Update song list of a playlist
+  const apiUpdatePlaylist = async (updatedPlaylistData) => {
     let playlistPayload = {
       key: key,
-      playlistrows: playlistRows
+      playlistID: activePlaylist,
+      playlistSongs: updatedPlaylistData
     };
-    let updatedPlaylistIndex = playlistPayload.playlistrows.findIndex(playlist => playlist.id === activePlaylist);
-    // No updated playlists found
-    if (updatedPlaylistIndex === -1) {
-      return;
-    }
-    playlistPayload.playlistrows[updatedPlaylistIndex].songs = songRows;
 
     const requestOptions = {
       method: "POST",
@@ -63,11 +58,42 @@ function PlayListTable() {
       body: JSON.stringify(playlistPayload)
     };
 
-    await fetch(config.urls.update, requestOptions);
+    await fetch(config.urls.api_update, requestOptions);
+  }
 
-    fetchPlaylists().then(playlists => {
-      setPlaylistRows(playlists)
-    })
+
+  // API: Add a new playlist
+  const apiAddPlaylist = async (newPlaylist) => {
+    let playlistPayload = {
+      key: key,
+      playlistID: newPlaylist,
+      playlistSongs: songRows
+    };
+
+    const requestOptions = {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(playlistPayload)
+    };
+
+    await fetch(config.urls.api_add, requestOptions);
+  }
+
+
+  // API: Delete a playlist
+  const apiDeletePlaylist = async (targetPlaylist) => {
+    let playlistPayload = {
+      key: key,
+      playlistID: targetPlaylist
+    };
+
+    const requestOptions = {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(playlistPayload)
+    };
+
+    await fetch(config.urls.api_delete, requestOptions);
   }
 
 
@@ -102,8 +128,9 @@ function PlayListTable() {
   const deletePlaylist = () => {
     // Filter out playlist element with given id
     const tmp = playlistRows.filter(playlist => { return playlist.id !== activePlaylist });
-    setPlaylistRows(tmp);
     setSongRows([]);
+    setPlaylistRows(tmp);
+    apiDeletePlaylist(activePlaylist);
   }
 
 
@@ -111,6 +138,7 @@ function PlayListTable() {
     // Filter out song element with given url
     const tmp = songRows.filter(song => { return song.title !== activeSong });
     setSongRows(tmp);
+    apiUpdatePlaylist(tmp);
   }
 
 
@@ -123,6 +151,7 @@ function PlayListTable() {
       if (!playlistRows.some(playlist => playlist.id === newPlaylistName)) {
         const tmp = playlistRows.concat({ id: newPlaylistName, songs: []});
         setPlaylistRows(tmp);
+        apiAddPlaylist(newPlaylistName);
       }
     }
 
@@ -138,6 +167,7 @@ function PlayListTable() {
     if (newSongName.length > 5 && activePlaylist.length > 2) {
       const tmp = songRows.concat({ title: newSongName, id: songRows.length + 1 });
       setSongRows(tmp);
+      apiUpdatePlaylist(tmp);
     }
 
     setNewSongDialogOpen(false);
@@ -200,11 +230,6 @@ function PlayListTable() {
           </Button>
         </DialogActions>
       </Dialog>
-
-
-      <Button variant="contained" color="primary" onClick={updateData} style={{ width: "auto", bottom: 50, left: 50 , position: "absolute" }}>
-        Save changes
-      </Button>
 
 
       <Container>

@@ -2,6 +2,8 @@
     "urls": 
     {
         "fetch": "http://localhost:20202/fetch_data",
-        "update": "http://localhost:20202/update_data"
+        "api_update": "http://localhost:20202/playlist_update",
+        "api_add": "http://localhost:20202/playlist_add",
+        "api_delete": "http://localhost:20202/playlist_delete"
     }
 }
