@@ -10,6 +10,10 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
 
+var config = require('./config.json')
+
+// Temporary key variable, to be replaced with actual authentication later on
+const key = "7125721748245718_wrong";
 
 const playlistColumns = [
   { field: 'id', headerName: 'Playlist name', flex: 0.5 },
@@ -34,7 +38,7 @@ function PlayListTable() {
 
   // Fetch playlists from backend entrypoint
   const fetchPlaylists = async () => {
-    const res = await fetch('http://localhost:20202/fetch_data');
+    const res = await fetch(config.urls.fetch);
     const json = await res.json();
     return json;
   }
@@ -42,11 +46,16 @@ function PlayListTable() {
 
   // Send new data to backend entrypoint
   const updateData = async () => {
-    let playlistPayload = playlistRows;
-    let updatedPlaylistIndex = playlistPayload.findIndex(playlist => playlist.id === activePlaylist);
-    playlistPayload[updatedPlaylistIndex].songs = songRows;
-
-    console.log(playlistPayload);
+    let playlistPayload = {
+      key: key,
+      playlistrows: playlistRows
+    };
+    let updatedPlaylistIndex = playlistPayload.playlistrows.findIndex(playlist => playlist.id === activePlaylist);
+    // No updated playlists found
+    if (updatedPlaylistIndex === -1) {
+      return;
+    }
+    playlistPayload.playlistrows[updatedPlaylistIndex].songs = songRows;
 
     const requestOptions = {
       method: "POST",
@@ -54,7 +63,7 @@ function PlayListTable() {
       body: JSON.stringify(playlistPayload)
     };
 
-    await fetch('http://localhost:20202/update_data', requestOptions);
+    await fetch(config.urls.update, requestOptions);
 
     fetchPlaylists().then(playlists => {
       setPlaylistRows(playlists)
