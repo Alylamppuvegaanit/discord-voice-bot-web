@@ -152,8 +152,7 @@ function PlayListTable() {
   }
 
 
-  const newPlaylist = (e) => {
-    e.preventDefault();
+  const newPlaylist = () => {
     let newPlaylistName = newPlaylistTitle;
 
     if (newPlaylistName.length > 2) {
@@ -169,8 +168,7 @@ function PlayListTable() {
   };
 
 
-  const newSong = (e) => {
-    e.preventDefault();
+  const newSong = () => {
     let newSongName = newSongURL;
 
     // Do basic validation and check whether a playlist is selected
@@ -216,7 +214,16 @@ function PlayListTable() {
       >
         <DialogTitle id="alert-dialog-title">{"Give password"}</DialogTitle>
         <DialogContent>
-          <TextField autoFocus label="Password" onInput={e => setAuthKey(e.target.value)} />
+          <TextField
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                closeAuthDialog();
+              }
+            }}
+            autoFocus
+            label="Password"
+            onInput={e => setAuthKey(e.target.value)}
+          />
         </DialogContent>
         <DialogActions>
           <Button onClick={authUser} color="primary">
@@ -234,7 +241,18 @@ function PlayListTable() {
       >
         <DialogTitle id="alert-dialog-title">{"Create a new playlist"}</DialogTitle>
         <DialogContent>
-          <TextField autoFocus label="Title" value={newPlaylistTitle} onInput={e => setNewPlaylistTitle(e.target.value)} />
+          <TextField
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                newPlaylist();
+              }
+            }}
+            autoFocus
+            label="Title"
+            value={newPlaylistTitle}
+            onInput={e => setNewPlaylistTitle(e.target.value)}
+          />
         </DialogContent>
         <DialogActions>
           <Button onClick={closeNewPlaylistDialog} color="primary">
@@ -255,7 +273,17 @@ function PlayListTable() {
       >
         <DialogTitle id="alert-dialog-title">{"Add a new song to playlist"}</DialogTitle>
         <DialogContent>
-          <TextField autoFocus label="YouTube URL" onInput={e => setNewSongURL(e.target.value)} />
+          <TextField
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                newSong();
+              }
+            }}
+            autoFocus
+            label="YouTube URL"
+            onInput={e => setNewSongURL(e.target.value)}
+          />
         </DialogContent>
         <DialogActions>
           <Button onClick={closeNewSongDialog} color="primary">
