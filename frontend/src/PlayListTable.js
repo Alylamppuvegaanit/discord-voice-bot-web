@@ -298,7 +298,7 @@ function PlayListTable() {
               }
             }}
             autoFocus
-            label="YouTube URL"
+            label="YouTube URL or search term"
             onInput={e => setNewSongURL(e.target.value)}
           />
         </DialogContent>
