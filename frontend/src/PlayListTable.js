@@ -98,7 +98,12 @@ function PlayListTable() {
 
   // Initiate effect for parsing playlist data from backend
   useEffect(() => {
-    openAuthDialog();
+    const browserAuthKey = window.localStorage.getItem("discord-voice-bot-key");
+    console.log(browserAuthKey);
+
+    browserAuthKey ?? openAuthDialog();
+    setAuthKey(browserAuthKey);
+
     fetchPlaylists().then(playlists => {
       setPlaylistRows(playlists)
     });
@@ -201,12 +206,24 @@ function PlayListTable() {
 
 
   const authUser = () => {
+    window.localStorage.setItem("discord-voice-bot-key", authKey);
     closeAuthDialog();
+  }
+
+
+  const deauthUser = () => {
+    window.localStorage.removeItem("discord-voice-bot-key");
+    window.location.reload();
   }
 
 
   return (
     <>
+      <Button color="secondary" variant="contained" onClick={deauthUser} style={{ position: "absolute", left: "10px", bottom: "10px" }}>
+        Logout
+      </Button>
+
+
       <Dialog
         open={authDialogOpen}
         aria-labelledby="alert-dialog-title"
