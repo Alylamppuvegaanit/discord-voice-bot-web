@@ -190,7 +190,14 @@ function PlayListTable() {
 
     // Do basic validation and check whether a playlist is selected
     if (newSongName.length > 5 && activePlaylist.length > 2) {
-      const tmp = songRows.concat({ title: newSongName, id: getFreeSongId() });
+      let newObject = {};
+      if (newSongName.startsWith("https://www.youtube.com/watch?")) {
+        newObject = { title: newSongName, id: getFreeSongId(), url: newSongName };
+      }
+      else {
+        newObject = { title: newSongName, id: getFreeSongId(), url: "" };
+      }
+      const tmp = songRows.concat(newObject);
       setSongRows(tmp);
       apiUpdatePlaylist(tmp);
     }
