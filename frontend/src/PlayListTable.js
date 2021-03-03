@@ -43,6 +43,18 @@ function PlayListTable() {
   }
 
 
+  const getFreeSongId = () => {
+    console.log(songRows)
+    for (let i = 0; i < 100000; i++) {
+      console.log(i);
+      console.log(songRows.findIndex(row => row.id === i) === -1);
+      if (songRows.findIndex(row => row.id === i) === -1) {
+        return i;
+      }
+    }
+    return -1;
+  }
+
   // API: Update song list of a playlist
   const apiUpdatePlaylist = async (updatedPlaylistData) => {
     let playlistPayload = {
@@ -178,7 +190,7 @@ function PlayListTable() {
 
     // Do basic validation and check whether a playlist is selected
     if (newSongName.length > 5 && activePlaylist.length > 2) {
-      const tmp = songRows.concat({ title: newSongName, id: songRows.length + 1 });
+      const tmp = songRows.concat({ title: newSongName, id: getFreeSongId() });
       setSongRows(tmp);
       apiUpdatePlaylist(tmp);
     }

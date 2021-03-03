@@ -89,7 +89,7 @@ app.post("//playlist_add", jsonParser, (req, res) => {
 
   // Add a playlist and write changes to persistent storage
   savedPlaylistData.push({ id: targetPlaylistID, songs: newSongs });
-  writePersistent(JSON.stringify(savedPlaylistData));
+  writePersistent(JSON.stringify(savedPlaylistData, null, '\t'));
 });
 
 
@@ -109,7 +109,7 @@ app.post("//playlist_delete", jsonParser, (req, res) => {
   let targetPlaylistIndex = savedPlaylistData.findIndex(playlist => playlist.id === targetPlaylistID);
   savedPlaylistData.splice(targetPlaylistIndex, 1);
 
-  writePersistent(JSON.stringify(savedPlaylistData));
+  writePersistent(JSON.stringify(savedPlaylistData, null, '\t'));
 });
 
 
