@@ -1,5 +1,6 @@
 frontend/build
 .env
+data/playlists.json
 # Logs
 logs
 *.log

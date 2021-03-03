@@ -69,8 +69,8 @@ app.post("//playlist_update", jsonParser, (req, res) => {
   if (savedPlaylistData[targetPlaylistIndex] !== undefined) {
     savedPlaylistData[targetPlaylistIndex].songs = updatedSongs;
   }
-  
-  writePersistent(JSON.stringify(savedPlaylistData));
+
+  writePersistent(JSON.stringify(savedPlaylistData, null, '\t'));
 });
 
 
